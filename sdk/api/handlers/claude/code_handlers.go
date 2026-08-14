@@ -83,6 +83,15 @@ func (h *ClaudeCodeAPIHandler) ClaudeMessages(c *gin.Context) {
 	// Decode claude-fable-5-dd-<reversed> model IDs back to the real model name for routing.
 	rawJSON = rewriteClaudeDDModelInBody(rawJSON)
 
+	// Image split: if the routed model's upstream cannot accept images, peel
+	// image blocks out, ask the vision model to describe them, and replace the
+	// images with the text description before routing to the original model.
+	modelName := gjson.GetBytes(rawJSON, "model").String()
+	if split, splitOK := splitImagesForUpstream(c, h, rawJSON, modelName); splitOK {
+		log.Infof("claude /v1/messages: image split applied for model %s", modelName)
+		rawJSON = split
+	}
+
 	// Check if the client requested a streaming response.
 	streamResult := gjson.GetBytes(rawJSON, "stream")
 	if !streamResult.Exists() || streamResult.Type == gjson.False {
