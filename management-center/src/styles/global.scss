@@ -1,0 +1,64 @@
+/**
+ * 全局样式
+ */
+
+@use './variables.scss' as *;
+@use './mixins.scss' as *;
+@use './reset.scss';
+@use './themes.scss';
+@use './components.scss';
+@use './layout.scss';
+
+body {
+  // 底色:柔夜色径向渐变 + 主题基色(玻璃卡面赖以通透)
+  background-color: var(--bg-secondary);
+  background-image:
+    radial-gradient(
+      900px 700px at 80% -8%,
+      color-mix(in srgb, var(--primary-color) 7%, transparent) 0%,
+      color-mix(in srgb, var(--primary-color) 0%, transparent) 60%
+    ),
+    linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-secondary) 100%);
+  background-attachment: fixed;
+  color: var(--text-primary);
+  transition:
+    background-color $transition-normal,
+    background-image $transition-normal,
+    color $transition-normal;
+}
+
+html.modal-open,
+body.modal-open {
+  overflow: hidden;
+}
+
+body.modal-open .content {
+  overflow: hidden;
+}
+
+// 滚动条样式
+::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--text-quaternary) 46%, transparent);
+  border-radius: $radius-full;
+  border: 2px solid transparent;
+  background-clip: content-box;
+
+  &:hover {
+    background: color-mix(in srgb, var(--text-quaternary) 70%, transparent);
+    background-clip: content-box;
+  }
+}
+
+// 文本选区
+::selection {
+  background: color-mix(in srgb, var(--primary-color) 26%, transparent);
+}

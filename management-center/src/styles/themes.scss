@@ -1,0 +1,301 @@
+/**
+ * 主题样式 —— Modern Dark Glass
+ *
+ * 三套主题均维持相同的变量名与语义契约,组件零改动即换肤:
+ *  - :root                浅色(默认,通透暖白玻璃)
+ *  - [data-theme='white'] 纯白
+ *  - [data-theme='dark']  墨蓝夜色深色玻璃(品牌紫→青渐变强调)
+ */
+
+// ─────────────────────────────────────────
+// 浅色主题(默认)
+// ─────────────────────────────────────────
+:root {
+  // 表面层级
+  --bg-secondary: #f4f6fb; // 页面背景
+  --bg-primary: #ffffff; // 容器/卡片背景
+  --bg-tertiary: #edeff6; // hover/次级背景
+  --bg-hover: #e5e8f2;
+  --bg-quinary: #f9fbfe;
+  --bg-error-light: rgba(229, 72, 77, 0.08);
+  --floating-surface: rgba(255, 255, 255, 0.86);
+  --floating-shadow: 0 12px 30px rgba(31, 42, 77, 0.16);
+
+  // 文本
+  --text-primary: #1b2233;
+  --text-secondary: #5a6478;
+  --text-tertiary: #8b93a7;
+  --text-quaternary: #aeb6c6;
+  --text-muted: var(--text-tertiary);
+
+  // 边框
+  --border-color: #e3e7f0;
+  --border-secondary: var(--border-color);
+  --border-primary: #cfd6e4;
+  --border-hover: #b9c2d6;
+
+  // 品牌主色(紫)
+  --primary-color: #6d5ae0;
+  --primary-hover: #5b48cf;
+  --primary-active: #4d3cb8;
+  --primary-contrast: #ffffff;
+
+  // 主色衍生
+  --primary-8: color-mix(in srgb, var(--primary-color) 8%, transparent);
+  --primary-10: color-mix(in srgb, var(--primary-color) 10%, transparent);
+  --primary-30: color-mix(in srgb, var(--primary-color) 30%, transparent);
+
+  // 语义色
+  --success-color: #0fae78;
+  --quota-medium-color: #d99a06;
+  --warning-color: #d99a06;
+  --error-color: #e5484d;
+  --danger-color: var(--error-color);
+  --info-color: #2563eb;
+
+  // 警告
+  --warning-bg: rgba(217, 154, 6, 0.12);
+  --warning-border: rgba(217, 154, 6, 0.4);
+  --warning-text: #9a6a03;
+
+  // 成功徽章
+  --success-badge-bg: rgba(15, 174, 120, 0.12);
+  --success-badge-text: #0b6e4f;
+  --success-badge-border: rgba(15, 174, 120, 0.4);
+
+  // 失败徽章
+  --failure-badge-bg: rgba(229, 72, 77, 0.12);
+  --failure-badge-text: #b33539;
+  --failure-badge-border: rgba(229, 72, 77, 0.4);
+
+  // 计数徽章
+  --count-badge-bg: color-mix(in srgb, var(--primary-color) 14%, transparent);
+  --count-badge-text: var(--primary-active);
+
+  // 阴影
+  --shadow: 0 1px 3px rgb(23 29 52 / 0.08), 0 3px 10px rgb(23 29 52 / 0.05);
+  --shadow-lg: 0 16px 40px -10px rgb(23 29 52 / 0.2);
+
+  --radius-md: 10px;
+
+  // Workbench tokens (Home parity)
+  --amber-color: #d97706;
+  --amber-text: #9a6a03;
+  --amber-10: color-mix(in srgb, var(--amber-color) 10%, transparent);
+  --amber-30: color-mix(in srgb, var(--amber-color) 30%, transparent);
+  --destructive-color: var(--error-color);
+  --destructive-10: color-mix(in srgb, var(--destructive-color) 10%, transparent);
+  --destructive-30: color-mix(in srgb, var(--destructive-color) 30%, transparent);
+  --muted-bg: var(--bg-tertiary);
+  --muted-foreground: var(--text-secondary);
+  --accent-bg: var(--bg-tertiary);
+
+  // Glass effect
+  --glass-blur: 14px;
+  --glass-backdrop-filter: blur(var(--glass-blur)) saturate(1.4);
+  --glass-filter: blur(var(--glass-blur));
+  --glass-bg: color-mix(in srgb, var(--bg-primary) 78%, transparent);
+  --glass-bg-secondary: color-mix(in srgb, var(--bg-secondary) 80%, transparent);
+  --glass-border: color-mix(in srgb, var(--border-color) 64%, transparent);
+
+  // 可视化
+  --viz-success: #0fae78;
+  --viz-failure: #e5484d;
+
+  // 动效
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --dur-press: 160ms;
+  --dur-hover: 200ms;
+}
+
+// ─────────────────────────────────────────
+// 纯白主题
+// ─────────────────────────────────────────
+[data-theme='white'] {
+  --bg-secondary: #fafbfd;
+  --bg-primary: #ffffff;
+  --bg-tertiary: #f1f3f8;
+  --bg-hover: #e8ebf3;
+  --bg-quinary: #ffffff;
+  --bg-error-light: rgba(229, 72, 77, 0.06);
+  --floating-surface: #ffffff;
+  --floating-shadow: 0 12px 26px rgba(23, 29, 52, 0.12);
+
+  --text-primary: #171c2a;
+  --text-secondary: #55607a;
+  --text-tertiary: #8a93a8;
+  --text-quaternary: #b3bac9;
+  --text-muted: var(--text-tertiary);
+
+  --border-color: #e8eaef;
+  --border-secondary: var(--border-color);
+  --border-primary: #d2d6e0;
+  --border-hover: #b5bccb;
+
+  --primary-color: #6d5ae0;
+  --primary-hover: #5b48cf;
+  --primary-active: #4d3cb8;
+  --primary-contrast: #ffffff;
+
+  --primary-8: color-mix(in srgb, var(--primary-color) 8%, transparent);
+  --primary-10: color-mix(in srgb, var(--primary-color) 10%, transparent);
+  --primary-30: color-mix(in srgb, var(--primary-color) 30%, transparent);
+
+  --success-color: #0fae78;
+  --quota-medium-color: #d99a06;
+  --warning-color: #d99a06;
+  --error-color: #e5484d;
+  --danger-color: var(--error-color);
+  --info-color: #2563eb;
+
+  --warning-bg: rgba(217, 154, 6, 0.1);
+  --warning-border: rgba(217, 154, 6, 0.36);
+  --warning-text: #9a6a03;
+
+  --success-badge-bg: rgba(15, 174, 120, 0.1);
+  --success-badge-text: #0b6e4f;
+  --success-badge-border: rgba(15, 174, 120, 0.36);
+
+  --failure-badge-bg: rgba(229, 72, 77, 0.1);
+  --failure-badge-text: #b33539;
+  --failure-badge-border: rgba(229, 72, 77, 0.36);
+
+  --count-badge-bg: color-mix(in srgb, var(--primary-color) 14%, transparent);
+  --count-badge-text: var(--primary-active);
+
+  --shadow: 0 1px 2px rgb(23 29 52 / 0.06);
+  --shadow-lg: 0 10px 22px -6px rgb(23 29 52 / 0.14);
+
+  --radius-md: 10px;
+
+  --amber-color: #d97706;
+  --amber-text: #9a6a03;
+  --amber-10: color-mix(in srgb, var(--amber-color) 10%, transparent);
+  --amber-30: color-mix(in srgb, var(--amber-color) 30%, transparent);
+  --destructive-color: var(--error-color);
+  --destructive-10: color-mix(in srgb, var(--destructive-color) 10%, transparent);
+  --destructive-30: color-mix(in srgb, var(--destructive-color) 30%, transparent);
+  --muted-bg: var(--bg-tertiary);
+  --muted-foreground: var(--text-secondary);
+  --accent-bg: var(--bg-tertiary);
+
+  --glass-blur: 12px;
+  --glass-backdrop-filter: blur(var(--glass-blur)) saturate(1.3);
+  --glass-filter: blur(var(--glass-blur));
+  --glass-bg: rgba(255, 255, 255, 0.8);
+  --glass-bg-secondary: rgba(250, 251, 253, 0.82);
+  --glass-border: color-mix(in srgb, var(--border-color) 62%, transparent);
+
+  --viz-success: #0fae78;
+  --viz-failure: #e5484d;
+
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --dur-press: 160ms;
+  --dur-hover: 200ms;
+}
+
+// ─────────────────────────────────────────
+// 深色主题 — 墨蓝夜色毛玻璃
+// ─────────────────────────────────────────
+[data-theme='dark'] {
+  // 表面层级(墨蓝夜色)
+  --bg-secondary: #0c0e15; // 页面背景(最深的夜色)
+  --bg-primary: #141824; // 卡片主面
+  --bg-tertiary: #1c2130; // hover/次级
+  --bg-hover: #232a3c;
+  --bg-quinary: #10131d;
+  --bg-error-light: rgba(229, 72, 77, 0.14);
+  --floating-surface: rgba(22, 27, 40, 0.86);
+  --floating-shadow: 0 16px 40px rgba(0, 0, 0, 0.45);
+
+  // 文本
+  --text-primary: #eef1f8;
+  --text-secondary: #a8b0c4;
+  --text-tertiary: #747e95;
+  --text-quaternary: #4f576c;
+  --text-muted: var(--text-tertiary);
+
+  // 边框
+  --border-color: #252c3d;
+  --border-secondary: var(--border-color);
+  --border-primary: #2f3a50;
+  --border-hover: #3d4b66;
+
+  // 品牌主色(紫,深色上提亮)
+  --primary-color: #9a7bff;
+  --primary-hover: #8b68f8;
+  --primary-active: #a890ff;
+  --primary-contrast: #0c0e15;
+
+  --primary-8: color-mix(in srgb, var(--primary-color) 10%, transparent);
+  --primary-10: color-mix(in srgb, var(--primary-color) 14%, transparent);
+  --primary-30: color-mix(in srgb, var(--primary-color) 34%, transparent);
+
+  // 语义色(深色上提亮一档)
+  --success-color: #2fd795;
+  --quota-medium-color: #ffce5b;
+  --warning-color: #ffce5b;
+  --error-color: #f7686d;
+  --danger-color: var(--error-color);
+  --info-color: #5aa9ff;
+
+  --warning-bg: rgba(255, 206, 91, 0.1);
+  --warning-border: rgba(255, 206, 91, 0.38);
+  --warning-text: #ffd97e;
+
+  --success-badge-bg: rgba(47, 215, 149, 0.12);
+  --success-badge-text: #6fe8bc;
+  --success-badge-border: rgba(47, 215, 149, 0.42);
+
+  --failure-badge-bg: rgba(247, 104, 109, 0.12);
+  --failure-badge-text: #ff9b9e;
+  --failure-badge-border: rgba(247, 104, 109, 0.42);
+
+  --count-badge-bg: color-mix(in srgb, var(--primary-color) 22%, transparent);
+  --count-badge-text: var(--primary-active);
+
+  --shadow: 0 2px 4px rgb(0 0 0 / 0.4), 0 6px 18px rgb(0 0 0 / 0.18);
+  --shadow-lg: 0 18px 48px -12px rgb(0 0 0 / 0.6);
+
+  --radius-md: 10px;
+
+  // Workbench tokens (Home parity)
+  --amber-color: #ffce5b;
+  --amber-text: #ffd97e;
+  --amber-10: color-mix(in srgb, var(--amber-color) 12%, transparent);
+  --amber-30: color-mix(in srgb, var(--amber-color) 34%, transparent);
+  --destructive-color: var(--error-color);
+  --destructive-10: color-mix(in srgb, var(--destructive-color) 12%, transparent);
+  --destructive-30: color-mix(in srgb, var(--destructive-color) 34%, transparent);
+  --muted-bg: var(--bg-tertiary);
+  --muted-foreground: var(--text-secondary);
+  --accent-bg: var(--bg-tertiary);
+
+  // Glass effect(深色上用更通透的 0.5X 叠加)
+  --glass-blur: 22px;
+  --glass-backdrop-filter: blur(var(--glass-blur)) saturate(1.6);
+  --glass-filter: blur(var(--glass-blur));
+  --glass-bg: color-mix(in srgb, var(--bg-primary) 52%, transparent);
+  --glass-bg-secondary: color-mix(in srgb, var(--bg-secondary) 55%, transparent);
+  --glass-border: color-mix(in srgb, var(--border-color) 46%, transparent);
+
+  --viz-success: #2fd795;
+  --viz-failure: #f7686d;
+
+  --ease-out-strong: cubic-bezier(0.23, 1, 0.32, 1);
+  --dur-press: 160ms;
+  --dur-hover: 200ms;
+}
+
+// 可访问性/偏好兜底:弱化或禁用毛玻璃
+@media (max-width: 768px),
+  (prefers-reduced-motion: reduce),
+  (prefers-reduced-transparency: reduce) {
+  :root {
+    --glass-backdrop-filter: none;
+    --glass-filter: none;
+    --glass-bg: var(--bg-primary);
+    --glass-bg-secondary: var(--bg-secondary);
+    --glass-border: var(--border-color);
+  }
+}
