@@ -143,6 +143,20 @@ func (e *OpenAICompatExecutor) Execute(ctx context.Context, auth *cliproxyauth.A
 	}
 	reporter.SetTranslatedReasoningEffort(translated, to.String())
 
+	// Some OpenAI-compatible upstreams (e.g. DeepSeek) require every assistant
+	// message to carry reasoning_content while in thinking mode. Historical
+	// tool-call-only turns have nothing to pass back, so backfill a fallback
+	// value only when compatibility mode is on and thinking is actually active.
+	if isCompat {
+		if effort := thinking.ExtractTranslatedReasoningEffort(translated, to.String()); effort != "" && effort != string(thinking.LevelNone) {
+			updatedBody, patched := helps.EnsureOpenAICompatAssistantReasoning(translated)
+			if patched > 0 {
+				translated = updatedBody
+				helps.LogWithRequestID(ctx).Debugf("openai compat executor: backfilled reasoning_content on %d assistant message(s)", patched)
+			}
+		}
+	}
+
 	url := strings.TrimSuffix(baseURL, "/") + endpoint
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(translated))
 	if err != nil {
@@ -351,6 +365,20 @@ func (e *OpenAICompatExecutor) ExecuteStream(ctx context.Context, auth *cliproxy
 	// are captured even when the upstream is an OpenAI-compatible provider.
 	translated = helps.SetBoolIfDifferent(translated, "stream_options.include_usage", true)
 	reporter.SetTranslatedReasoningEffort(translated, to.String())
+
+	// Some OpenAI-compatible upstreams (e.g. DeepSeek) require every assistant
+	// message to carry reasoning_content while in thinking mode. Historical
+	// tool-call-only turns have nothing to pass back, so backfill a fallback
+	// value only when compatibility mode is on and thinking is actually active.
+	if isCompat {
+		if effort := thinking.ExtractTranslatedReasoningEffort(translated, to.String()); effort != "" && effort != string(thinking.LevelNone) {
+			updatedBody, patched := helps.EnsureOpenAICompatAssistantReasoning(translated)
+			if patched > 0 {
+				translated = updatedBody
+				helps.LogWithRequestID(ctx).Debugf("openai compat executor: backfilled reasoning_content on %d assistant message(s)", patched)
+			}
+		}
+	}
 
 	url := strings.TrimSuffix(baseURL, "/") + "/chat/completions"
 	httpReq, err := http.NewRequestWithContext(ctx, http.MethodPost, url, bytes.NewReader(translated))
