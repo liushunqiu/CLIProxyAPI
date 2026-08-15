@@ -17,27 +17,43 @@ import (
 	"strings"
 
 	"github.com/gin-gonic/gin"
+	"github.com/router-for-me/CLIProxyAPI/v7/internal/config"
 	. "github.com/router-for-me/CLIProxyAPI/v7/internal/constant"
 	log "github.com/sirupsen/logrus"
 	"github.com/tidwall/gjson"
 	"github.com/tidwall/sjson"
 )
 
-// visionModel is the model used to analyze images when the requested model's
-// upstream rejects image input. grok-4.6 is vision-capable and reaches the
+// defaultVisionModel is the fallback model used to analyze images when no
+// vision model is configured. grok-4.6 is vision-capable and reaches the
 // proxy through the xai provider (verified working end-to-end).
-const visionModel = "grok-4.6"
+const defaultVisionModel = "grok-4.6"
 
 // upstreamRejectsImages reports whether the given model's upstream is known to
-// reject image input. This mirrors models routed to OpenAI-compatible upstreams
-// like tokenharbor's deepseek-v4-flash:free that return
-// "does not accept image input". Unknown models are treated leniently (false).
-func upstreamRejectsImages(model string) bool {
+// reject image input. When cfg is non-nil and its ImageRejectingModels list is
+// non-empty, each entry is matched exactly (after stripping prefix and [1m]
+// suffix). If the list is empty, the built-in default behavior is used: models
+// matching deepseek-v4-flash, deepseek-v4-flash:free, or starting with
+// deepseek-v4- or deepseek-r are rejected.
+func upstreamRejectsImages(model string, cfg *config.VisionSplitConfig) bool {
 	base := strings.ToLower(strings.TrimSpace(model))
 	base = strings.TrimSuffix(base, "[1m]")
+	base = strings.TrimSpace(base) // re-trim whitespace left behind after stripping the [1m] suffix
 	if i := strings.LastIndex(base, "/"); i >= 0 {
 		base = base[i+1:]
 	}
+
+	// When a config list is provided, use exact matching.
+	if cfg != nil && len(cfg.ImageRejectingModels) > 0 {
+		for _, entry := range cfg.ImageRejectingModels {
+			if base == strings.ToLower(strings.TrimSpace(entry)) {
+				return true
+			}
+		}
+		return false
+	}
+
+	// Default behavior: hardcoded prefix matching.
 	return base == "deepseek-v4-flash" || base == "deepseek-v4-flash:free" ||
 		strings.HasPrefix(base, "deepseek-v4-") ||
 		strings.HasPrefix(base, "deepseek-r")
@@ -85,7 +101,17 @@ func contentHasImageBlocks(content gjson.Result) bool {
 // image blocks are replaced with the description text. It returns the (possibly
 // rewritten) bytes and whether a split actually happened.
 func splitImagesForUpstream(c *gin.Context, h *ClaudeCodeAPIHandler, rawJSON []byte, modelName string) ([]byte, bool) {
-	if !upstreamRejectsImages(modelName) {
+	// Resolve the vision-split configuration. When absent, built-in defaults apply.
+	var vsCfg *config.VisionSplitConfig
+	visionModel := defaultVisionModel
+	if h.Cfg != nil {
+		vsCfg = &h.Cfg.ClaudeCode.VisionSplit
+		if m := strings.TrimSpace(h.Cfg.ClaudeCode.VisionSplit.VisionModel); m != "" {
+			visionModel = m
+		}
+	}
+
+	if !upstreamRejectsImages(modelName, vsCfg) {
 		return rawJSON, false
 	}
 	if !hasClaudeImageBlocks(rawJSON) {

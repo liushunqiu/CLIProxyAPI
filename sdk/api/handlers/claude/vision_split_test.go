@@ -4,8 +4,103 @@ import (
 	"encoding/json"
 	"testing"
 
+	"github.com/router-for-me/CLIProxyAPI/v7/internal/config"
 	"github.com/tidwall/gjson"
 )
+
+func TestUpstreamRejectsImages(t *testing.T) {
+	tests := []struct {
+		name  string
+		model string
+		cfg   *config.VisionSplitConfig
+		want  bool
+	}{
+		{
+			name:  "nil config uses default deepseek-v4-flash exact",
+			model: "deepseek-v4-flash",
+			cfg:   nil,
+			want:  true,
+		},
+		{
+			name:  "nil config uses default prefix matching",
+			model: "deepseek-v4-flash-lite",
+			cfg:   nil,
+			want:  true,
+		},
+		{
+			name:  "nil config uses default deepseek-r prefix",
+			model: "deepseek-r2",
+			cfg:   nil,
+			want:  true,
+		},
+		{
+			name:  "nil config unknown model is lenient",
+			model: "grok-4.6",
+			cfg:   nil,
+			want:  false,
+		},
+		{
+			name:  "empty config list falls back to default",
+			model: "deepseek-v4-flash",
+			cfg:   &config.VisionSplitConfig{},
+			want:  true,
+		},
+		{
+			name:  "empty config list still lenient on others",
+			model: "grok-4.6",
+			cfg:   &config.VisionSplitConfig{},
+			want:  false,
+		},
+		{
+			name:  "configured list matches exactly",
+			model: "custom-model",
+			cfg: &config.VisionSplitConfig{
+				ImageRejectingModels: []string{"custom-model", "another-model"},
+			},
+			want: true,
+		},
+		{
+			name:  "configured list does not prefix match",
+			model: "custom-model-pro",
+			cfg: &config.VisionSplitConfig{
+				ImageRejectingModels: []string{"custom-model"},
+			},
+			want: false,
+		},
+		{
+			name:  "configured list overrides default",
+			model: "deepseek-v4-flash",
+			cfg: &config.VisionSplitConfig{
+				ImageRejectingModels: []string{"custom-model"},
+			},
+			want: false,
+		},
+		{
+			name:  "configured list strips path prefix and 1m suffix",
+			model: "provider/deepseek-v4-flash:free [1m]",
+			cfg: &config.VisionSplitConfig{
+				ImageRejectingModels: []string{"deepseek-v4-flash:free"},
+			},
+			want: true,
+		},
+		{
+			name:  "case insensitive match",
+			model: "DeepSeek-V4-Flash",
+			cfg: &config.VisionSplitConfig{
+				ImageRejectingModels: []string{"deepseek-v4-flash"},
+			},
+			want: true,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := upstreamRejectsImages(tt.model, tt.cfg); got != tt.want {
+				t.Fatalf("upstreamRejectsImages(%q) = %v, want %v", tt.model, got, tt.want)
+			}
+		})
+	}
+}
 
 func TestHasClaudeImageBlocks(t *testing.T) {
 	cases := []struct {

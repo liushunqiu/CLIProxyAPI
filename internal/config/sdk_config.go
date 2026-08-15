@@ -67,6 +67,28 @@ type SDKConfig struct {
 type ClaudeCodeConfig struct {
 	// DisableCloakingModelList disables model ID cloaking in Anthropic model list responses.
 	DisableCloakingModelList bool `yaml:"disable-cloaking-model-list" json:"disable-cloaking-model-list"`
+
+	// VisionSplit configures the image-split passthrough for models whose upstream
+	// rejects image input. When a request carries image blocks and the routed model
+	// matches ImageRejectingModels, images are peeled out, sent to VisionModel for
+	// description, and replaced with the returned text before routing to the original model.
+	VisionSplit VisionSplitConfig `yaml:"vision-split" json:"vision-split"`
+}
+
+// VisionSplitConfig configures vision-split behavior for image-rejecting upstreams.
+type VisionSplitConfig struct {
+	// VisionModel is the model used to analyze images when the requested model's
+	// upstream rejects image input. Must be a model reachable through this proxy
+	// that supports image input. Defaults to "grok-4.6" if unset.
+	VisionModel string `yaml:"vision-model" json:"vision-model"`
+
+	// ImageRejectingModels is a list of exact model names whose upstream is known to
+	// reject image input. When a request targets one of these models and contains
+	// image blocks, the images are split out and sent to the vision model instead.
+	// Each entry is matched exactly. If the list is empty, the built-in default
+	// behavior is used (matching deepseek-v4-flash, deepseek-v4-flash:free, and any
+	// model starting with deepseek-v4- or deepseek-r).
+	ImageRejectingModels []string `yaml:"image-rejecting-models" json:"image-rejecting-models"`
 }
 
 // StreamingConfig holds server streaming behavior configuration.
