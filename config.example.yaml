@@ -183,6 +183,9 @@ claude-code:
   # vision-split:
   #   # Model used to analyze images. Must be reachable through this proxy and
   #   # support image input. Defaults to "grok-4.6" when unset.
+  #   # To use Xiaomi MiMo 2.5 via a local MiMo2API instance, add an
+  #   # openai-compatibility provider for it (see below) and set:
+  #   #   vision-model: "mimo-v2.5"
   #   vision-model: "grok-4.6"
   #   # Exact model names whose upstream rejects image input. Each entry matches
   #   # exactly (prefix and " [1m]" suffix are stripped first). When empty, the
@@ -501,7 +504,21 @@ nonstream-keepalive-interval: 0
 #   beta-features: "multi_agent"
 
 # OpenAI compatibility providers
+# Example: route through a local MiMo2API instance (a proxy that exposes Xiaomi
+# MiMo AI Studio as an OpenAI-compatible API). MiMo 2.5 models support image
+# input, so this provider can back claude-code.vision-split.vision-model.
 # openai-compatibility:
+#   - name: "mimo2api" # local MiMo2API instance
+#     base-url: "http://localhost:8080/v1" # MiMo2API OpenAI-compatible root
+#     api-key-entries:
+#       - api-key: "sk-mimo" # default MiMo2API key; replace with yours
+#     models:
+#       - name: "mimo-v2.5-pro" # upstream model served by MiMo2API
+#         alias: "mimo-v2.5-pro"
+#         input-modalities: [text, image] # declare image input for vision-split
+#       - name: "mimo-v2.5" # upstream model served by MiMo2API
+#         alias: "mimo-v2.5"
+#         input-modalities: [text, image]
 #   - name: "openrouter" # The name of the provider; it will be used in the user agent and other places.
 #     disabled: false # optional: set to true to disable this provider without removing it
 #     prefix: "test" # optional: require calls like "test/kimi-k2" to target this provider's credentials
